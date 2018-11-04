@@ -2,47 +2,15 @@ const express = require("express"),
           app = express(),
    bodyParser = require("body-parser"),
          port = 3000,
-     mongoose = require("mongoose");
+     mongoose = require("mongoose"),
+     Campground = require("./models/campground"),
+        seedDB = require("./seeds");
 
 mongoose.connect("mongodb://localhost/yelp_camp", { useNewUrlParser: true });
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({extended:true}));
+seedDB();
 
-//SCHEMA SETUP
-let campgroundSchema = new mongoose.Schema({
-    name: String,
-    image: String
-})
-
-let Campground = mongoose.model("Campground", campgroundSchema);
-
-// Campground.create(
-//                 {
-
-//                  name: "Mountain Goat",
-//                  image: "https://farm9.staticflickr.com/8041/7930230882_0bb80ca452.jpg"
-
-//                 }, function(err, campground){
-//                     if(err){
-//                         console.log(err);
-//                     } else {
-//                         console.log("Newly created campground");
-//                         console.log(campground);
-//                     }
-//                 });
-
-
-var campgrounds = [
-        {name: "Salmon Creek", image: "https://farm3.staticflickr.com/2259/2182093741_164dc44a24.jpg"},
-        {name: "Granite Hill", image: "https://farm2.staticflickr.com/1363/1342367857_2fd12531e7.jpg"},
-        {name: "Mountain Goat", image: "https://farm9.staticflickr.com/8041/7930230882_0bb80ca452.jpg"},
-        {name: "Salmon Creek", image: "https://farm3.staticflickr.com/2259/2182093741_164dc44a24.jpg"},
-        {name: "Granite Hill", image: "https://farm2.staticflickr.com/1363/1342367857_2fd12531e7.jpg"},
-        {name: "Mountain Goat", image: "https://farm9.staticflickr.com/8041/7930230882_0bb80ca452.jpg"},
-        {name: "Salmon Creek", image: "https://farm3.staticflickr.com/2259/2182093741_164dc44a24.jpg"},
-        {name: "Granite Hill", image: "https://farm2.staticflickr.com/1363/1342367857_2fd12531e7.jpg"},
-        {name: "Mountain Goat", image: "https://farm9.staticflickr.com/8041/7930230882_0bb80ca452.jpg"}
-    ];
 
 app.get("/", function(req, res){
     res.render("landing");
@@ -53,7 +21,7 @@ app.get("/campgrounds", function(req,res){
         if(err){
             coonsole.log(err);
         } else {
-            res.render("campgrounds", {campgrounds: allCampgrounds});   
+            res.render("index", {campgrounds: allCampgrounds});   
         }
     })
 });
@@ -77,7 +45,17 @@ app.post("/campgrounds", function(req,res){
 
 app.get("/campgrounds/new", function(req,res){
     res.render("new");
-})
+});
+
+app.get("/campgrounds/:id", function(req,res){
+    Campground.findById(req.params.id, function(err, foundCampground){
+        if(err){
+            console.log(err)
+        } else {
+            res.render("show", {campground: foundCampground})
+        }
+    })
+}); 
 
   
 app.listen(port, function(){
