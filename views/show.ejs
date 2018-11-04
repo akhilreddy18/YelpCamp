@@ -3,4 +3,8 @@
 <h1> This is a show page </h1>
 <h2> <%= campground.name %> </h2>
 
+<% campground.comments.forEach(function(comment){ %>
+	<p> <%= comment.author %> </p>	
+<% }) %>
+
 <% include partials/footer %>

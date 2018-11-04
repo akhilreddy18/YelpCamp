@@ -1,6 +1,6 @@
 const mongoose = require("mongoose"),
-	Campground = require("./models/campground");
-	// Comment    = require("./models/comment");
+	Campground = require("./models/campground"),
+	Comment    = require("./models/comment");
 
 var data = [
         {name: "Salmon Creek", image: "https://farm3.staticflickr.com/2259/2182093741_164dc44a24.jpg"},
@@ -26,6 +26,19 @@ function seedDB(){
 						console.log(err);
 					} else {
 						console.log("created a campground");
+						Comment.create(
+						{
+							text: "Blah blah blah blah",
+							author: "Akhil"
+						}, function(err, comment){
+							if(err){
+								console.log(err);
+							} else {
+								console.log("created new comment");
+								createdCampground.comments.push(comment);
+								createdCampground.save();
+							}
+						})
 					}
 				})
 			})
